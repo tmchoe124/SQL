@@ -56,6 +56,11 @@ async function viewEmployees() {
 }
 async function addEmployee() {
     const { rows: employee } = await pool.query("Select id, first_name, last_name FROM employees");
+    const { rows: roles } = await pool.query("SELECT id, title FROM role");
+    const roleChoices = roles.map((role) => ({
+        name: role.title,
+        value: role.id,
+    }));
     const managerChoices = [
         { name: "None", value: null },
         ...employee.map((employee) => ({
@@ -75,9 +80,10 @@ async function addEmployee() {
             message: "What is the employee's last name?",
         },
         {
-            type: "input",
+            type: "list",
             name: "role_id",
             message: "What is the employee's role?",
+            choices: roleChoices,
         },
         {
             type: "list",
